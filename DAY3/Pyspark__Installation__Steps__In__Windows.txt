@@ -1,0 +1,160 @@
+Step 1: Create a Virtual Environment
+=======================================
+Open Command Prompt or PowerShell and navigate to your desired project directory:
+# Create a new directory for your project  
+mkdir pyspark_project
+cd pyspark_project
+
+# Create virtual environment
+python -m venv pyspark_env
+
+# Activate the virtual environment
+# For Command Prompt:
+pyspark_env\Scripts\activate.bat
+
+# For PowerShell:
+pyspark_env\Scripts\Activate.ps1
+
+-----------------------------------------------------------------------
+Note for PowerShell users: If you get an execution policy error, run:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+-----------------------------------------------------------------------
+
+Step 2: Upgrade pip
+====================
+python -m pip install --upgrade pip
+
+Step 3: Install PySpark and Jupyter
+=====================================
+pip install pyspark jupyter notebook
+
+
+Step 4: Install Java (Required for PySpark)
+=============================================
+PySpark requires Java 8 or later. Here's how to set it up:
+
+Download Java:
+---------------
+Go to Oracle JDK or OpenJDK
+Download Java 11 or 17 (LTS versions recommended)
+Install it
+Download link: https://www.oracle.com/java/technologies/downloads/
+----------------------------------------------------------------------
+
+Set JAVA_HOME environment variable:
+
+Search for "Environment Variables" in Windows
+Click "Environment Variables" button
+Under "System variables", click "New"
+Variable name: JAVA_HOME
+Variable value: C:\Program Files\Java\jdk-17 (adjust path to your Java installation)
+Click OK
+
+
+Add Java to PATH:
+
+Find the "Path" variable under System variables
+Click "Edit"
+Click "New"
+Add: %JAVA_HOME%\bin
+Click OK
+
+
+Verify Java installation:
+----------------------------
+java -version
+=================================================================
+Step 5: Verify PySpark Installation
+
+# Start Python
+python
+
+# In Python, run:
+import pyspark
+print(pyspark.__version__)
+=================================================================
+Step 6: Launch Jupyter Notebook
+jupyter notebook
+==================================================
+Step 7: Test PySpark in Jupyter
+
+Create a new notebook and run:
+
+from pyspark.sql import SparkSession
+
+# Create Spark session
+spark = SparkSession.builder \
+    .appName("TestPySpark") \
+    .master("local[*]") \
+    .getOrCreate()
+
+# Test with a simple DataFrame
+data = [("Data1", 25), ("Data2", 30)]
+columns = ["dname", "code"]
+
+df = spark.createDataFrame(data, columns)
+df.show()
+
+# Check Spark version
+print(f"Spark version: {spark.version}")
+
+# Stop the session
+spark.stop()
+--------------------------------------------------------
+
+
+Common Issues and Solutions
+-------------------------------
+Issue 1: Python 3.13 Compatibility
+--------------------------------------
+PySpark might have compatibility issues with Python 3.13 (very recent). 
+If you encounter problems:
+# Deactivate current environment
+deactivate
+
+# Create a new environment with Python 3.11
+python -m venv --python=python3.11 pyspark_env
+
+If Python 3.11 isn't installed, download it from python.org.
+ --------------------------------------- ---------------------------------------
+
+Issue 2: winutils.exe Error (Windows-specific)
+
+If you get hadoop/winutils errors:
+
+Download winutils.exe from GitHub
+Create folder: C:\hadoop\bin
+Place winutils.exe in that folder
+Add environment variable:
+
+Variable name: HADOOP_HOME
+Variable value: C:\hadoop
+
+ ---------------------------------------  ---------------------------------------
+
+Issue 3: Port Already in Use
+If port 4040 (Spark UI) is already in use:
+
+pythonspark = SparkSession.builder \
+    .appName("TestPySpark") \
+    .config("spark.ui.port", "4041") \
+    .getOrCreate()
+
+Quick Verification Script
+Save this as test_pyspark.py and run it:
+-----------------------------------------------------
+from pyspark.sql import SparkSession
+
+try:
+    spark = SparkSession.builder \
+        .appName("InstallationTest") \
+        .master("local[*]") \
+        .getOrCreate()
+    
+    print(f" Spark version: {spark.version}")
+    print(f" Python version: {spark.sparkContext.pythonVer}")
+    
+    spark.stop()
+except Exception as e:
+    print(f" Error: {e}")
+-----------------------------------------------------------------------------------------------------
