@@ -1,0 +1,8 @@
+pip install streamlit
+
+# To run 
+streamlit run python_Filename.py
+
+<or>
+
+python -m streamlit run python_Filename.py
